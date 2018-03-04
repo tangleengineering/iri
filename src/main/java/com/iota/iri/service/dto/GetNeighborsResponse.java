@@ -1,6 +1,8 @@
 package com.iota.iri.service.dto;
 
 import java.util.List;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class GetNeighborsResponse extends AbstractResponse {
 
@@ -13,6 +15,7 @@ public class GetNeighborsResponse extends AbstractResponse {
     static class Neighbor {
 
         private String address;
+	private String ip;
         public long numberOfAllTransactions, numberOfRandomTransactionRequests, numberOfNewTransactions, numberOfInvalidTransactions, numberOfSentTransactions;
         public String connectionType;
 
@@ -44,6 +47,11 @@ public class GetNeighborsResponse extends AbstractResponse {
             Neighbor ne = new Neighbor();
             int port = n.getPort();
             ne.address = n.getAddress().getHostString() + ":" + port;
+		try {
+	            ne.ip = InetAddress.getByName(n.getAddress().getHostString()).getHostAddress();
+		} catch(UnknownHostException e) {
+	            ne.ip = "could not resolve hostname";
+		}
             ne.numberOfAllTransactions = n.getNumberOfAllTransactions();
             ne.numberOfInvalidTransactions = n.getNumberOfInvalidTransactions();
             ne.numberOfNewTransactions = n.getNumberOfNewTransactions();
