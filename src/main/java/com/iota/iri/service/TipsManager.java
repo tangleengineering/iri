@@ -85,19 +85,22 @@ public class TipsManager {
     }
 
     private void scanTipsForSolidity() throws Exception {
+        log.info("Scan status: {} / {}",tipsViewModel.nonSolidSize(),tipsViewModel.size()-tipsViewModel.nonSolidSize());
+
         int size = tipsViewModel.nonSolidSize();
         if(size != 0) {
             Hash hash = tipsViewModel.getRandomNonSolidTipHash();
             boolean isTip = true;
-            if(hash != null && TransactionViewModel.fromHash(tangle, hash).getApprovers(tangle).size() != 0) {
-                tipsViewModel.removeTipHash(hash);
-                isTip = false;
-            }
             if(hash != null  && isTip && transactionValidator.checkSolidity(hash, false)) {
                 //if(hash != null && TransactionViewModel.fromHash(hash).isSolid() && isTip) {
                 tipsViewModel.setSolid(hash);
             }
+            if(hash != null && TransactionViewModel.fromHash(tangle, hash).getApprovers(tangle).size() != 0) {
+                tipsViewModel.removeTipHash(hash);
+                isTip = false;
+            }
         }
+
     }
 
     public void shutdown() throws InterruptedException {

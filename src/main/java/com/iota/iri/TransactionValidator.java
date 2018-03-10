@@ -216,7 +216,8 @@ public class TransactionValidator {
 
     public void updateStatus(TransactionViewModel transactionViewModel) throws Exception {
         transactionRequester.clearTransactionRequest(transactionViewModel.getHash());
-        if(transactionViewModel.getApprovers(tangle).size() == 0) {
+        boolean bTip=transactionViewModel.getApprovers(tangle).size() == 0;
+        if(bTip) {
             tipsViewModel.addTipHash(transactionViewModel.getHash());
         }
         tipsViewModel.removeTipHash(transactionViewModel.getTrunkTransactionHash());
@@ -224,9 +225,11 @@ public class TransactionValidator {
 
         if(quickSetSolid(transactionViewModel)) {
             addSolidTransaction(transactionViewModel.getHash());
+            if(bTip){
+                   tipsViewModel.setSolid(transactionViewModel.getHash());
+            }
         }
-    }
-
+}
     public boolean quietQuickSetSolid(TransactionViewModel transactionViewModel) {
         try {
             return quickSetSolid(transactionViewModel);
